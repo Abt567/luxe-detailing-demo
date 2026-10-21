@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book Now | Luxe Mobile Detailing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='booking.css') }}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body>
+
+
+   <div id="terms-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <h2>Before You Continue</h2>
+      <p>
+        Please review and agree to our
+        <a href="/static/Terms and Conditions.pdf" target="_blank">Terms and Conditions</a>
+        and
+        <a href="/static/Privacy Policy..pdf" target="_blank">Privacy Policy</a>
+        to use this website.
+      </p>
+      <div class="checkbox-group">
+        <label>
+          <input type="checkbox" id="agree-terms">
+          I agree to the <a href="/static/Terms and Conditions.pdf" target="_blank">Terms and Conditions</a>
+        </label>
+        <label>
+          <input type="checkbox" id="agree-privacy">
+          I agree to the <a href="/static/Privacy Policy..pdf" target="_blank">Privacy Policy</a>
+        </label>
+      </div>
+      <button id="accept-btn" disabled>Enter Site</button>
+    </div>
+  </div>
+
+
+  <div class="booking-container">
+    <h1>Book Your Detailing</h1>
+    <p class="subheading">Mobile. Meticulous. Made for You.</p>
+
+    <div class="calendar-layout">
+      <div class="calendar-box">
+        <label>Choose a Date</label>
+        <div id="calendar"></div>
+        <p id="date-warning" style="color: red; display: none;">This date is unavailable.</p>
+      </div>
+      <div class="timeslots-box">
+        <h3>Available Time Slots</h3>
+        <div id="timeslots-container"></div>
+      </div>
+    </div>
+
+    <form action="/book" method="POST" id="booking-form" novalidate>
+      <label for="package">Select Package</label>
+      <select id="package" name="package" required>
+        <option value="">-- Choose a Package --</option>
+        <option value="standard">Standard – $140.99</option>
+        <option value="premium">Premium – $250.99</option>
+        <option value="elite">Elite – $500.99</option>
+      </select>
+
+      <label>Add-On Services</label>
+      <label class="checkbox-row">
+        <input type="checkbox" name="addons" value="engine_bay" />
+        <span>Engine Bay Restoration – $50.99</span>
+      </label>
+      <div class="checkbox-row">
+        <input type="checkbox" name="addons" value="steam_cleaning" />
+        <span>Carpet Steam Cleaning – $50.99</span>
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" name="addons" value="pet_hair" />
+        <span>Pet Hair Removal – $25.99</span>
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" name="addons" value="ceramic_coating" />
+        <span>Ceramic Coating – $75.99</span>
+      </div>
+
+      <div class="form-row">
+        <label for="vehicle">Vehicle Make, Model & Year</label>
+        <input type="text" id="vehicle" name="vehicle" placeholder="e.g. BMW X5 2024" required />
+      </div>
+
+      <div class="form-row">
+
+        <label for="address">Service Address</label>
+        <textarea 
+          id="address" 
+          name="address" 
+          rows="3" 
+          placeholder="123 Example St NW, Calgary, AB"
+          required
+          pattern=".*[Cc]algary.*"
+          title="Address must include 'Calgary'"
+        ></textarea>
+      </div>
+
+      <div class="form-row">
+        <label for="postal_code">Postal Code</label>
+        <input 
+          type="text" 
+          id="postal_code" 
+          name="postal_code" 
+          placeholder="e.g. T2N 1N4"
+          required 
+          pattern="^[Tt][23][A-Za-z][ -]?\d[A-Za-z]\d$"
+          title="Enter a valid Calgary postal code (T2 or T3)" 
+        />
+      </div>
+
+      <div class="form-row">
+
+        <label for="phone">Phone Number</label>
+        <input 
+          type="tel" 
+          id="phone" 
+          name="phone" 
+          placeholder="403-123-4567"
+          required
+          pattern="^(403|587|825|368)[-\s.]?\d{3}[-\s.]?\d{4}$"
+          title="Enter a valid Calgary phone number (403, 587, 825, 368 area codes)" 
+        />
+      </div>
+
+      <div class="form-row">
+
+        <label for="email">Your Email</label>
+        <input type="email" id="email" name="email" placeholder="you@email.com" required />
+      </div>
+      
+      <input type="hidden" id="date" name="date" required>
+      <input type="hidden" id="time" name="time" required>
+
+      <button type="submit" class="submit-btn">Submit Booking</button>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script>
+    let selectedDate = null;
+    let selectedPackage = document.getElementById('package').value || "standard";
+
+    function showAvailableTimes(dateStr) {
+      fetch(`/available-times?date=${dateStr}&package=${document.getElementById('package').value || "standard"}`)
+        .then(res => res.json())
+        .then(data => {
+          const container = document.getElementById("timeslots-container");
+          container.innerHTML = '';
+          if (!data.available_slots || data.available_slots.length === 0) {
+            container.innerHTML = '<div class="no-times">No available slots for this package on this day.</div>';
+            document.getElementById("time").value = "";
+            document.getElementById("date").value = dateStr;
+          } else {
+            data.available_slots.forEach(time => {
+              const btn = document.createElement("div");
+              btn.className = "time-slot";
+              btn.innerText = time;
+              btn.onclick = function() {
+                document.querySelectorAll('.time-slot').forEach(slot => slot.classList.remove('selected'));
+                btn.classList.add('selected');
+                document.getElementById("date").value = dateStr;
+                document.getElementById("time").value = time;
+              };
+              container.appendChild(btn);
+            });
+            document.getElementById("date").value = dateStr;
+            document.getElementById("time").value = "";
+          }
+        });
+    }
+
+    flatpickr("#calendar", {
+        inline: true,
+        minDate: "today",
+        dateFormat: "Y-m-d",
+        disable: [
+            function(date) {
+                return date.getDay() === 0 || date.getDay() === 6;
+            }
+        ],
+        onChange: function(selectedDates, dateStr, instance) {
+            selectedDate = dateStr;
+            showAvailableTimes(dateStr);
+        }
+    });
+
+    document.getElementById('package').addEventListener('change', function() {
+        selectedPackage = this.value;
+        if (selectedDate) {
+            showAvailableTimes(selectedDate);
+        }
+    });
+
+    document.getElementById('booking-form').addEventListener('submit', function(e) {
+      if (!document.getElementById('time').value) {
+        e.preventDefault();
+        alert('Please select a time slot before booking.');
+        return;
+      }
+      const address = document.getElementById('address').value;
+      if (!/calgary/i.test(address)) {
+        e.preventDefault();
+        alert("Service address must include 'Calgary'");
+        return;
+      }
+      const postal = document.getElementById('postal_code').value;
+      if (!/^[Tt][23][A-Za-z][ -]?\d[A-Za-z]\d$/.test(postal)) {
+        e.preventDefault();
+        alert("Enter a valid Calgary postal code (T2 or T3)");
+        return;
+      }
+      const phone = document.getElementById('phone').value;
+      if (!/^(403|587|825|368)[-\s.]?\d{3}[-\s.]?\d{4}$/.test(phone)) {
+        e.preventDefault();
+        alert("Phone number must be a valid Calgary number (403, 587, 825, 368)");
+        return;
+      }
+    });
+  </script>
+</body>
+</html>

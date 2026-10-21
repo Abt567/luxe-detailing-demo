@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Luxury Car Detailing | Pricing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='car_detailing.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <div id="terms-modal" class="terms-modal">
+        <div class="terms-modal-content">
+            <h2>Terms and Conditions & Privacy Policy</h2>
+            <div id="terms-scrollbox" class="terms-scrollbox">
+
+            <h3>Terms and Conditions</h3>
+            <p><strong>Effective Date:</strong> July 1, 2025<br>
+            <strong>Company Name:</strong> Luxe Detailing<br>
+            <strong>Website:</strong> https://luxe-detailing.com/</p>
+
+            <p><strong>1. Acceptance of Terms</strong><br>
+            By accessing or using this website, you agree to comply with and be bound by these Terms and Conditions. If you do not agree with any part of these terms, you must not use this site or any of our services.</p>
+
+            <p><strong>2. Intellectual Property</strong><br>
+            All content on this website — including but not limited to the logo, branding, graphics, images, text, and website code — is the intellectual property of Luxe Detailing. You may not copy, reproduce, distribute, or use any content without our express written permission.</p>
+
+            <p><strong>3. Prohibited Use</strong><br>
+            You agree not to use this website for:<br>
+            • Any illegal or unauthorized purpose<br>
+            • Spamming or sending unsolicited communications<br>
+            • Attempting to hack, damage, or compromise the website<br>
+            • Uploading malicious code or viruses<br>
+            • Interfering with the security or functionality of the site<br>
+            We reserve the right to suspend or permanently ban any user or account found in violation of these terms.</p>
+
+            <p><strong>4. Appointments, Cancellations, and Refunds</strong><br>
+            • All service appointments must be cancelled at least 24 hours in advance.<br>
+            • We do not offer refunds for cancelled or missed appointments.<br>
+            • Late cancellations or no-shows will be subject to 20% of the original price.</p>
+
+            <p><strong>6. Account Termination</strong><br>
+            We reserve the right to terminate or suspend user access to the website and its services at any time, without notice, for any violation of these Terms and Conditions.</p>
+
+            <p><strong>7. Governing Law</strong><br>
+            These Terms and Conditions shall be governed by and interpreted in accordance with the laws of Calgary, Alberta, Canada.</p>
+
+            <p><strong>8. Modifications to Terms</strong><br>
+            We may update these Terms and Conditions at any time. Changes will be posted on this page and will become effective immediately upon posting. Continued use of the site constitutes acceptance of any changes.</p>
+
+            <hr>
+
+            <h3>Privacy Policy</h3>
+            <p><strong>Effective Date:</strong> July 1, 2025<br>
+            <strong>Company Name:</strong> Luxe Detailing<br>
+            <strong>Website:</strong> https://luxe-detailing.com/</p>
+
+            <p><strong>1. Introduction</strong><br>
+            At Luxe Detailing, your privacy is extremely important to us. This Privacy Policy explains how we collect, use, and protect the personal information you provide to us through our website.</p>
+
+            <p><strong>2. Information We Collect</strong><br>
+            When you use our website or book services, we may collect the following information:<br>
+            • Your name<br>
+            • Phone number<br>
+            • Email address<br>
+            • Physical address (for mobile detailing service)</p>
+
+            <p><strong>3. How We Use Your Information</strong><br>
+            We use the personal information we collect solely for the following purposes:<br>
+            • To communicate with you regarding your appointment or service inquiries<br>
+            • To confirm your location for mobile detailing services<br>
+            • To provide customer support or service updates<br>
+            We do NOT sell, share, or transfer your information to any third-party services or advertisers.</p>
+
+            <p><strong>4. Data Security</strong><br>
+            We take the security of your data seriously and implement appropriate measures to protect your information from unauthorized access, misuse, or disclosure.</p>
+
+            <p><strong>5. Cookies and Tracking</strong><br>
+            Our website does not use tracking cookies or third-party analytics services that collect personal information.</p>
+
+            <p><strong>6. Your Rights</strong><br>
+            You have the right to:<br>
+            • Request access to the information we hold about you<br>
+            • Request correction or deletion of your personal data<br>
+            • Withdraw consent at any time by contacting us</p>
+
+            <p><strong>7. Contact Us</strong><br>
+            If you have any questions or concerns about this Privacy Policy, or if you wish to access or update your personal data, please contact:<br>
+            Luxe Detailing<br>
+            Email: abellema943@gmail.com<br>
+            Phone: 403-555-0100 <br>
+
+            <p><strong>8. Policy Updates</strong><br>
+            We may update this Privacy Policy from time to time. All changes will be posted on this page with an updated effective date.</p>
+            </div>
+            <div class="terms-actions">
+                <button id="disagree-btn">Disagree</button>
+                <button id="agree-btn" disabled>Agree</button>
+            </div>
+        </div>
+    </div>
+
+
+    <a href="{{ url_for('booking_page') }}" class="floating-book-btn">Book Now</a>
+
+    <section class="hero-text">
+        <div class="top">
+            <a href="#pricing" class="btn-grey">Pricing</a>
+            <a href="#services" class="btn-grey">Services</a>
+            <a href="#gallery" class="btn-grey">Gallery</a>
+        </div>
+        <img src="{{ url_for('static', filename='logo-removebg-preview (2).png') }}" alt="Luxe Logo" class="hero-logo">
+        <h2 class="headline">Luxe Mobile Detailing</h2>
+        <h2 class="subheadline">Where Luxury Meets Convenience</h2>
+        <div class="hero-buttons">
+            <a href="{{ url_for('booking_page') }}" class="btn-gold">Book Now</a>
+            <a href="#gallery" class="btn-grey">View Gallery</a>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <div class="about-card">
+            <h2>About Us</h2>
+            <div id="about-typed" class="about-typed"></div>
+            <img src="{{ url_for('static', filename='your-signature.png') }}" alt="Signature" class="signature-img">
+        </div>
+    </section>
+
+    <section class="services-section" id="services">
+        <div class="service-card">
+            <div class="service-images-box">
+                <img src="{{ url_for('static', filename='basic.jpg') }}" alt="Basic package image" class="service-images-box">
+            </div>
+            <h3>Exterior Polish.</h3>
+            <p>
+            Deep cleaning, premium waxing, and hand-polished shine for your vehicle’s exterior.
+            </p>
+        </div>
+        <div class="service-card">
+            <div class="service-images-box">
+                <img src="{{ url_for('static', filename='elite.jpg') }}" alt="Elite package image" class="service-images-box">
+            </div>
+            <h3>Ceramic Coating.</h3>
+            <p>
+            Advanced protection—keep your car gleaming and shielded with our lasting ceramic finish.
+            </p>
+        </div>
+        <div class="service-card">
+            <div class="service-images-box">
+                <img src="{{ url_for('static', filename='standard.jpg') }}" alt="Standard package image" class="service-images-box">
+            </div>
+            <h3>Interior Detailing.</h3>
+            <p>
+            Sumptuous leather care, precision vacuuming, and gold-standard attention to every detail.
+            </p>
+        </div>
+    </section>
+
+    <section class="pricing-section" id="pricing">
+        <h2 class="pricing-title">Our Packages</h2>
+        <p class="pricing-subtitle">Clean. Polished. Luxe.</p>
+        <div class="pricing-cards">
+            <div class="pricing-card">
+            <h3>Standard – $140.99</h3>
+            <p class="time">1 hr 30 mins</p>
+            <ul>
+                <li><span style="color: gold;">✔</span> Foam cannon pre-soak & gentle hand wash</li>
+                <li><span style="color: gold;">✔</span> Door jamb cleaning</li>
+                <li><span style="color: gold;">✔</span> Interior vacuum (seats, carpets, trunk)</li>
+                <li><span style="color: grey;">✔</span> Surface detailing (dashboard, doors, console)</li>
+                <li><span style="color: grey;">✔</span> Window cleaning, Tire shine, Rim wipe</li>
+                <li><span style="color: grey;">✔</span> Floor mat deep cleaning</li>
+                <li><span style="color: grey;">✔</span> <strong>Complimentary air freshener</strong></li>
+            </ul>
+            <button class="btn-black">Book Standard</button>
+            </div>
+            <div class="pricing-card">
+            <h3>Premium – $250.99</h3>
+            <p class="time">3 hrs</p>
+            <ul>
+                <li><span style="color: grey;">✔</span> Clay bar decontamination + hand wash</li>
+                <li><span style="color: grey;">✔</span> Protective wax & sealant</li>
+                <li><span style="color: grey;">✔</span> Interior shampoo (carpets, mats, seats, trunk)</li>
+                <li><span style="color: grey;">✔</span> Tire shine, window cleaning, steam clean</li>
+                <li><span style="color: grey;">✔</span> Leather/vinyl conditioning</li>
+            </ul>
+            <button class="btn-black">Book Premium</button>
+            </div>
+            <div class="pricing-card">
+            <h3>Elite – $500.99</h3>
+            <p class="time">8 hrs</p>
+            <ul>
+                <li><span style="color: grey;">✔</span> Complete decontamination + clay bar</li>
+                <li><span style="color: grey;">✔</span> Wax, sealant & 2-step paint correction</li>
+                <li><span style="color: grey;">✔</span> High-gloss finishing spray</li>
+                <li><span style="color: grey;">✔</span> Engine bay cleaning</li>
+                <li><span style="color: grey;">✔</span> Deep interior shampoo + steam clean</li>
+                <li><span style="color: grey;">✔</span> Leather/vinyl conditioning</li>
+            </ul>
+            <button class="btn-gold">Book Elite</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="gallery-section" id="gallery">
+        <div class="gallery-words">
+            <h2 class="gallery-title">Gallery</h2>
+            <p class="gallery-subtitle">Where Clean Meets Class.</p>
+        </div>
+        <div class="gallery-grid">
+            <img src="{{ url_for('static', filename='gallery_1.jpg') }}" alt="Gallery Image 1">
+            <img src="{{ url_for('static', filename='gallery_2.jpg') }}" alt="Gallery Image 2">
+            <img src="{{ url_for('static', filename='gallery_3.jpg') }}" alt="Gallery Image 3">
+            <img src="{{ url_for('static', filename='gallery_4.jpg') }}" alt="Gallery Image 4">
+            <img src="{{ url_for('static', filename='gallery_5.jpg') }}" alt="Gallery Image 5">
+            <img src="{{ url_for('static', filename='gallery_6.jpg') }}" alt="Gallery Image 6">
+        </div>
+    </section>
+
+    <section class="footer-cta">
+        <h2 class="footer-tagline">
+            LUXURY THAT SHINES
+        </h2>
+        <div class="social-icons">
+            <a href="#" target="_blank" class="social-btn">
+            <i class="fab fa-instagram"></i>
+            </a>
+            <a href="#" target="_blank" class="social-btn">
+            <i class="fab fa-tiktok"></i>
+            </a>
+        </div>
+        <p class="footer-copy">© 2025 Luxe Luxury | All rights reserved.</p>
+    </section>
+
+    <!-- Font Awesome CDN for icons -->
+    <script src="https://kit.fontawesome.com/yourFontAwesomeKey.js" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='animation.js') }}"></script>
+
+</body>
+</html>

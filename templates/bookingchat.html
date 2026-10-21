@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book Now | Luxe Mobile Detailing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/booking.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body>
+
+  <div class="booking-container">
+    <h1>Book Your Detailing</h1>
+    <p class="subheading">Mobile. Meticulous. Made for You.</p>
+
+    <div class="calendar-layout">
+      <div class="calendar-box">
+        <label>Choose a Date</label>
+        <div id="calendar"></div>
+        <p id="date-warning" style="color: red; display: none;">This date is unavailable.</p>
+      </div>
+      <div class="timeslots-box">
+        <h3>Available Time Slots</h3>
+        <div id="timeslots-container">
+          <!-- Time slot buttons will be generated here -->
+        </div>
+      </div>
+    </div>
+
+    <form action="/book" method="POST" id="booking-form">
+      <label for="package">Select Package</label>
+      <select id="package" name="package" required>
+        <option value="">-- Choose a Package --</option>
+        <option value="standard">Standard – $140.99</option>
+        <option value="premium">Premium – $250.99</option>
+        <option value="elite">Elite – $500.99</option>
+      </select>
+
+      <label>Add-On Services</label>
+      <div class="checkbox-group">
+        <div class="checkbox-row">
+          <input type="checkbox" name="addons" value="engine_bay" />
+          <span>Engine Bay Restoration – $50.99</span>
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" name="addons" value="steam_cleaning" />
+          <span>Carpet Steam Cleaning – $50.99</span>
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" name="addons" value="pet_hair" />
+          <span>Pet Hair Removal – $25.99</span>
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" name="addons" value="ceramic_coating" />
+          <span>Ceramic Coating – $75.99</span>
+        </div>
+      </div>
+
+      <label for="vehicle">Vehicle Make, Model & Year</label>
+      <input type="text" id="vehicle" name="vehicle" placeholder="e.g. BMW X5 2024" required />
+
+      <label for="address">Service Address</label>
+      <textarea id="address" name="address" rows="3" placeholder="Your address for mobile service" required></textarea>
+
+      <!-- Hidden fields for JS to fill -->
+      <input type="hidden" id="date" name="date" required>
+      <input type="hidden" id="time" name="time" required>
+
+      <button type="submit" class="submit-btn">Submit Booking</button>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script>
+    let selectedDate = null;
+    let selectedPackage = document.getElementById('package').value || "standard";
+
+    function showAvailableTimes(dateStr) {
+      fetch(`/available-times?date=${dateStr}&package=${document.getElementById('package').value || "standard"}`)
+        .then(res => res.json())
+        .then(data => {
+          const container = document.getElementById("timeslots-container");
+          container.innerHTML = '';
+          if (!data.available_slots || data.available_slots.length === 0) {
+            container.innerHTML = '<div class="no-times">No available slots for this package on this day.</div>';
+            document.getElementById("time").value = "";
+            document.getElementById("date").value = dateStr;
+          } else {
+            data.available_slots.forEach(time => {
+              const btn = document.createElement("div");
+              btn.className = "time-slot";
+              btn.innerText = time;
+              btn.onclick = function() {
+                // Remove selection from others
+                document.querySelectorAll('.time-slot').forEach(slot => slot.classList.remove('selected'));
+                btn.classList.add('selected');
+                // Fill hidden fields
+                document.getElementById("date").value = dateStr;
+                document.getElementById("time").value = time;
+              };
+              container.appendChild(btn);
+            });
+            document.getElementById("date").value = dateStr;
+            document.getElementById("time").value = "";
+          }
+        });
+    }
+
+    flatpickr("#calendar", {
+      inline: true,
+      minDate: "today",
+      dateFormat: "Y-m-d",
+      disable: [
+        function(date) {
+          // Disable Saturday (6) and Sunday (0)
+          return date.getDay() === 0 || date.getDay() === 6;
+        }
+      ],
+      onChange: function(selectedDates, dateStr, instance) {
+        selectedDate = dateStr;
+        showAvailableTimes(dateStr);
+      }
+    });
+
+    document.getElementById('package').addEventListener('change', function() {
+      selectedPackage = this.value;
+      if (selectedDate) {
+        showAvailableTimes(selectedDate);
+      }
+    });
+
+    // Prevent submitting the form without selecting a time slot
+    document.getElementById('booking-form').addEventListener('submit', function(e) {
+      if (!document.getElementById('time').value) {
+        e.preventDefault();
+        alert('Please select a time slot before booking.');
+      }
+    });
+  </script>
+
+</body>
+</html>

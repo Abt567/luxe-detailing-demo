@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Booking Confirmed | Luxe Mobile Detailing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='car_detailing.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      background: #0a0a0a;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Poppins', Arial, sans-serif;
+    }
+    .success-card {
+      background: #181818;
+      border-radius: 24px;
+      box-shadow: 0 6px 36px rgba(0,0,0,0.18);
+      padding: 40px 32px 32px 32px;
+      max-width: 400px;
+      text-align: center;
+      margin: 40px auto;
+      border: 1.5px solid #d2b87a;
+    }
+    .success-icon {
+      font-size: 52px;
+      color: #ffd700;
+      margin-bottom: 16px;
+      margin-top: 6px;
+    }
+    .success-title {
+      font-family: 'Anton', 'Poppins', Arial, sans-serif;
+      font-size: 2.1rem;
+      color: #ffd700;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+    .success-msg {
+      color: #ececec;
+      font-size: 1.1rem;
+      margin-bottom: 24px;
+    }
+    .success-details {
+      color: #b4b4b4;
+      font-size: 0.97rem;
+      margin-bottom: 24px;
+    }
+    .back-home-btn, .book-again-btn {
+      display: inline-block;
+      margin: 12px 6px 0 6px;
+      padding: 13px 36px;
+      border-radius: 32px;
+      border: none;
+      text-decoration: none;
+      font-size: 1.06rem;
+      font-family: 'Poppins', Arial, sans-serif;
+      font-weight: 600;
+      letter-spacing: .2px;
+      transition: 0.16s;
+      box-shadow: 0 2px 8px rgba(40,40,40,0.07);
+    }
+    .back-home-btn {
+      background: #ffd700;
+      color: #181818;
+    }
+    .back-home-btn:hover {
+      background: #fff7e1;
+      color: #181818;
+    }
+    .book-again-btn {
+      background: #181818;
+      color: #ffd700;
+      border: 1.5px solid #ffd700;
+    }
+    .book-again-btn:hover {
+      background: #ffd700;
+      color: #181818;
+    }
+    .footer-copy {
+      color: #d4d4d4;
+      margin-top: 60px;
+      text-align: center;
+      font-size: 0.98rem;
+      letter-spacing: 0.1px;
+    }
+  </style>
+</head>
+<body>
+  <div class="success-card">
+    <div class="success-icon">
+      <i class="fas fa-check-circle"></i>
+    </div>
+    <div class="success-title">Booking Confirmed!</div>
+    <div class="success-msg">Thank you for choosing <strong>Luxe Mobile Detailing</strong>.</div>
+    <div class="success-details">
+      Your booking is secured. <br>
+      We look forward to making your car shine! <br>
+      <br>
+      <em>A confirmation email will be sent to you shortly. <br>For changes, please contact us.</em>
+    </div>
+    <a href="{{ url_for('home') }}" class="back-home-btn">Back to Home</a>
+    <a href="{{ url_for('booking_page') }}" class="book-again-btn">Book Another</a>
+  </div>
+  <div class="footer-copy">© 2025 Luxe Mobile Detailing | All rights reserved.</div>
+</body>
+</html>
