@@ -43,24 +43,22 @@ Customer → booking.html
         successful.html
 ```
 
-## Demo mode
+## Live demo setup
 
-This copy runs in **demo mode** by default, because the business is closed and its Google account is no longer in use. Demo mode keeps the real booking flow: the availability algorithm, package durations, travel buffer and all input validation run exactly as they did in production. The only differences are that existing bookings are simulated, and confirmed bookings are not saved to a calendar or emailed.
+The original business has closed, so this copy runs on my own accounts. Each integration switches on only when its settings exist:
+
+| Setting | What it turns on |
+|---|---|
+| `SENDER_EMAIL`, `APP_PASSWORD` | Real confirmation emails (Gmail SMTP) |
+| `CALENDAR_ID`, `GOOGLE_APPLICATION_CREDENTIALS` | Real availability and bookings in Google Calendar |
+
+With neither set, availability is simulated and bookings are not saved or emailed, so the project runs anywhere with no setup. Because the demo is public, bookings are limited to 3 per visitor per hour, and confirmation emails are marked as a demo.
 
 ## Running it locally
 
 ```bash
 pip install -r requirements.txt
-python backend.py        # starts in demo mode
-```
-
-To run the original production behaviour, set `DEMO_MODE=false` and provide your own credentials:
-
-```bash
-export DEMO_MODE=false
-export GOOGLE_APPLICATION_CREDENTIALS=path/to/service-account.json
-export SENDER_EMAIL=you@gmail.com
-export APP_PASSWORD=your-gmail-app-password
+python backend.py
 ```
 
 ## Deploying

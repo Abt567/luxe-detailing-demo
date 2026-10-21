@@ -9,11 +9,13 @@ from email.mime.multipart import MIMEMultipart
 import pytz
 import random
 import re
+import time as time_module
+from collections import defaultdict, deque
 
 app = Flask(__name__)
 
 # === Google Calendar Setup ===
-CALENDAR_ID = '323e170f527adafc7769832dc4ad17007f7038e9ec357ffadeb2592966ec7b91@group.calendar.google.com'
+CALENDAR_ID = os.environ.get("CALENDAR_ID")
 SERVICE_ACCOUNT_FILE = os.environ.get(
     "GOOGLE_APPLICATION_CREDENTIALS",
     os.path.join(os.path.dirname(__file__), 'templates', 'credentials.json')  # fallback: templates/
@@ -21,20 +23,34 @@ SERVICE_ACCOUNT_FILE = os.environ.get(
 
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
-# === Demo mode ===
-# The original business has closed, so the public demo runs without Google
-# credentials: availability is simulated and bookings are not saved or emailed.
-# Set DEMO_MODE=false (with real credentials) to run the original production behaviour.
-DEMO_MODE = (
-    os.environ.get("DEMO_MODE", "true").lower() != "false"
-    or not os.path.exists(SERVICE_ACCOUNT_FILE)
-)
+# === Feature switches ===
+# Each integration turns on only when its settings exist, so the site runs
+# anywhere: with no settings it simulates availability and skips side effects.
+CALENDAR_ENABLED = bool(CALENDAR_ID) and os.path.exists(SERVICE_ACCOUNT_FILE)
 
 credentials = None
-if not DEMO_MODE:
+if CALENDAR_ENABLED:
     credentials = service_account.Credentials.from_service_account_file(
         SERVICE_ACCOUNT_FILE, scopes=SCOPES
     )
+
+# === Booking rate limit (public demo protection) ===
+MAX_BOOKINGS_PER_HOUR = int(os.environ.get("MAX_BOOKINGS_PER_HOUR", "3"))
+_recent_bookings = defaultdict(deque)
+
+def client_ip():
+    forwarded = request.headers.get("X-Forwarded-For", "")
+    return forwarded.split(",")[0].strip() if forwarded else request.remote_addr
+
+def rate_limited(ip):
+    now = time_module.time()
+    history = _recent_bookings[ip]
+    while history and now - history[0] > 3600:
+        history.popleft()
+    if len(history) >= MAX_BOOKINGS_PER_HOUR:
+        return True
+    history.append(now)
+    return False
 
 
 def demo_busy_events(date_base, tz):
@@ -60,9 +76,12 @@ PACKAGE_LENGTHS = {
 
 SENDER_EMAIL = os.environ.get("SENDER_EMAIL")
 APP_PASSWORD = os.environ.get("APP_PASSWORD")
+EMAIL_ENABLED = bool(SENDER_EMAIL and APP_PASSWORD)
+
+print(f"Calendar: {'on' if CALENDAR_ENABLED else 'simulated'} | Email: {'on' if EMAIL_ENABLED else 'off'}")
 
 def send_confirmation_email(to_email, package, date, time, vehicle, address, postal_code, phone):
-    subject = "Luxe Mobile Detailing Booking Confirmation"
+    subject = "Luxe Mobile Detailing Booking Confirmation (Demo)"
     body = f"""
 Hi,
 
@@ -81,6 +100,10 @@ We'll see you soon!
 If you need to change or cancel, reply to this email.
 
 Thank you!
+
+---
+Note: Luxe Mobile Detailing is a portfolio demo built by Abel Lema.
+No real appointment has been scheduled.
 """
     msg = MIMEMultipart()
     msg['From'] = SENDER_EMAIL
@@ -132,7 +155,7 @@ def available_times():
     close_time = calgary_tz.localize(date_base.replace(hour=15, minute=0, second=0))
 
     blocked_times = []
-    if DEMO_MODE:
+    if not CALENDAR_ENABLED:
         events = []
         blocked_times = [(s, e + buffer) for s, e in demo_busy_events(date_base, calgary_tz)]
     else:
@@ -189,6 +212,9 @@ def book():
     email = request.form.get('email')
     addons = request.form.getlist('addons')
 
+    if rate_limited(client_ip()):
+        return "Too many bookings from this device. Please try again in an hour.", 429
+
     # Validate all required fields
     if not (package and date and time and vehicle and address and postal_code and email and phone):
         return "Missing information", 400
@@ -220,14 +246,8 @@ def book():
     start_iso = start_datetime.isoformat()
     end_iso = end_datetime.isoformat()
 
-    if DEMO_MODE:
-        # Demo: everything above (validation, scheduling maths) ran for real,
-        # but nothing is written to a calendar or emailed.
-        return redirect(url_for('successful'))
+    description = f"Email: {email}\nVehicle: {vehicle}\nAddress: {address}\nPostal Code: {postal_code}\nPhone: {phone}\nAdd-ons: {', '.join(addons) if addons else 'None'}"
 
-    description = f"Vehicle: {vehicle}\nAddress: {address}\nPostal Code: {postal_code}\nPhone: {phone}\nAdd-ons: {', '.join(addons) if addons else 'None'}"
-
-    service = build('calendar', 'v3', credentials=credentials)
     event = {
         'summary': f"Luxe Detailing - {package.title()} Package",
         'location': address,
@@ -235,9 +255,15 @@ def book():
         'start': {'dateTime': start_iso, 'timeZone': 'America/Edmonton'},
         'end': {'dateTime': end_iso, 'timeZone': 'America/Edmonton'},
     }
-    service.events().insert(calendarId=CALENDAR_ID, body=event).execute()
+    if CALENDAR_ENABLED:
+        try:
+            service = build('calendar', 'v3', credentials=credentials)
+            service.events().insert(calendarId=CALENDAR_ID, body=event).execute()
+        except Exception as e:
+            print("Failed to add calendar event:", e)
 
-    send_confirmation_email(email, package, date, time, vehicle, address, postal_code, phone)
+    if EMAIL_ENABLED:
+        send_confirmation_email(email, package, date, time, vehicle, address, postal_code, phone)
     return redirect(url_for('successful'))
 
 if __name__ == '__main__':
