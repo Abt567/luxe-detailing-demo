@@ -2,7 +2,7 @@
 
 A full-stack booking website I built for **Luxe Mobile Detailing**, a mobile car detailing business in Calgary. The site was used in production by the business to take real customer bookings in 2025. The business has since stopped operating, so this repo is now kept as a portfolio project.
 
-**Live demo:** [add Render link here] *(demo mode: bookings are not sent anywhere)*
+**Live demo:** https://luxe-detailing-demo.onrender.com
 
 ## What it did
 
